@@ -5,7 +5,7 @@ var sinon = require('sinon');
 
 describe('colordash', function() {
 
-    describe.only('basic usage', function() {
+    describe('basic usage', function() {
         it('should lighten', function() {
             var actual = colordash.lighten('#888', 0.5);
             var expected = '#CCCCCC';
@@ -21,6 +21,46 @@ describe('colordash', function() {
         it('should whiten', function() {
             var actual = colordash.whiten('#888', 0.5);
             var expected = '#A1A1A1';
+            expect(actual).to.equal(expected);
+        });
+
+
+    });
+
+    describe('preservation of color speficiation', function() {
+        it('should preserve hex', function() {
+            var actual = colordash.lighten('#888', 0.5);
+            var expected = '#CCCCCC';
+            expect(actual).to.equal(expected);
+        });
+
+        it('should preserve rgb', function() {
+            var actual = colordash.lighten('rgb(100, 100, 100)', 0.5);
+            var expected = 'rgb(150, 150, 150)';
+            expect(actual).to.equal(expected);
+        });
+
+        it('should preserve rgba', function() {
+            var actual = colordash.lighten('rgba(100, 100, 100, 0.7)', 0.5);
+            var expected = 'rgba(150, 150, 150, 0.7)';
+            expect(actual).to.equal(expected);
+        });
+
+        it('should preserve hsl', function() {
+            var actual = colordash.lighten('hsl(120, 100%, 50%)', 0.5);
+            var expected = 'hsl(120, 100%, 75%)';
+            expect(actual).to.equal(expected);
+        });
+
+        it('should preserve hsla', function() {
+            var actual = colordash.lighten('hsla(120, 100%, 50%, 0.5)', 0.5);
+            var expected = 'hsla(150, 150, 150, 0.7, 0.5)';
+            expect(actual).to.equal(expected);
+        });
+
+        it('should should default to rgba if it starts with hex but now has opacity', function() {
+            var actual = colordash.clearer('#888', 0.5);
+            var expected = 'rgba(136, 136, 136, 0.5)';
             expect(actual).to.equal(expected);
         });
 
