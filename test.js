@@ -54,7 +54,7 @@ describe('colordash', function() {
 
         it('should preserve hsla', function() {
             var actual = colordash.lighten('hsla(120, 100%, 50%, 0.5)', 0.5);
-            var expected = 'hsla(150, 150, 150, 0.7, 0.5)';
+            var expected = 'hsla(120, 100%, 75%, 0.5)';
             expect(actual).to.equal(expected);
         });
 
