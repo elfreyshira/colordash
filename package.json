@@ -1,0 +1,39 @@
+{
+  "name": "colordash",
+  "version": "1.0.0",
+  "description": "A lodash-style wrapper around the `color` npm library. With added aliases that match LESS and SASS functions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elfreyshira/colordash.git"
+  },
+  "keywords": [
+    "color",
+    "lodash",
+    "colors",
+    "functional",
+    "fp",
+    "css",
+    "less",
+    "sass",
+    "javascript",
+    "js"
+  ],
+  "author": "Elfrey Shira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elfreyshira/colordash/issues"
+  },
+  "homepage": "https://github.com/elfreyshira/colordash#readme",
+  "dependencies": {
+    "color": "^0.10.1"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
+  }
+}
