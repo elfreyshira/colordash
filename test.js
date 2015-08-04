@@ -73,6 +73,21 @@ describe('colordash', function() {
             expect(actual).to.equal(expected);
         });
 
+        it('should have immutable intermediary steps', function() {
+            var intermediaryValue = colordash('#888').lighten(0.6);
+
+            var darkenValue1 = intermediaryValue.darken(0.2).value();
+            var expectedValue1 = '#ADADAD';
+            expect(darkenValue1).to.equal(expectedValue1);
+
+            var darkenValue2 = intermediaryValue.darken(0.4).value();
+            var expectedValue2 = '#828282';
+            expect(darkenValue2).to.equal(expectedValue2);
+
+            var intermediaryExpectedValue = '#D9D9D9';
+            expect(intermediaryValue.value()).to.equal(intermediaryExpectedValue);
+        });
+
         it('should not evaluate until value() or valueOf() is called', function() {
             var lightenSpy = sinon.spy(color.prototype, 'lighten');
             var darkenSpy = sinon.spy(color.prototype, 'darken');
@@ -87,7 +102,6 @@ describe('colordash', function() {
             colordashWrapper.value();
             expect(lightenSpy.called).to.be.true;
             expect(darkenSpy.called).to.be.true;
-
         });
     });
 
