@@ -1,7 +1,7 @@
 {
   "name": "colordash",
   "version": "1.0.0",
-  "description": "A lodash-style wrapper around the `color` npm library. With added aliases that match LESS and SASS functions.",
+  "description": "A lodash-style wrapper around the `color` npm library.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
