@@ -1,61 +1,54 @@
 var color = require('color');
 var _ = require('lodash');
+var colorSpecOutput = require('./util/color-spec-output');
 
-var colorModuleFunctions = _.functions(color.prototype);
-
-
-function colordash () {
+function colordash (obj) {
+    return new ColordashWrapper(obj);
 }
 
-
-var hexRegex = /^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/;
-var rgbRegex = /^rgba?\(\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*(?:,\s*([+-]?[\d\.]+)\s*)?\)$/;
-var hslRegex = /^hsla?\(\s*([+-]?\d+)(?:deg)?\s*,\s*([+-]?[\d\.]+)%\s*,\s*([+-]?[\d\.]+)%\s*(?:,\s*([+-]?[\d\.]+)\s*)?\)/;
-
-function isHex(str) {
-    return hexRegex.test(str);
-}
-function isRgb(str) {
-    return rgbRegex.test(str);
-}
-function isHsl(str) {
-    return hslRegex.test(str);
-}
-
-var HEX_STRING_FUNCTION = 'hexString';
-var RGB_STRING_FUNCTION = 'rgbString';
-var HSL_STRING_FUNCTION = 'hslString';
-
-function colorSpecOutput(colorInput, alphaArg) {
-    var alpha = alphaArg || 1;
-    var colorIsHex = isHex(colorInput);
-
-    if (colorIsHex && alpha === 1) {
-        return HEX_STRING_FUNCTION;
-    }
-    else if (colorIsHex && alpha < 1) {
-        return RGB_STRING_FUNCTION;
-    }
-    else if (isHsl(colorInput)) {
-        return HSL_STRING_FUNCTION;
-    }
-    else { // if rgb or anything else
-        return RGB_STRING_FUNCTION;
-    }
+function ColordashWrapper(obj, functionQueue) {
+    this.__inputValue = obj;
+    this.__functionQueue = functionQueue || [];
 }
 
 _.forEach(
-    colorModuleFunctions,
+    _.functions(color.prototype),
     function (colorFunction) {
+
+        ColordashWrapper.prototype[colorFunction] = function (/* args */) {
+            var argsArray = _.toArray(arguments);
+
+            var inputValue = this.__inputValue;
+            var functionQueue = this.__functionQueue.concat({
+                functionName: colorFunction,
+                argsArray: argsArray
+            });
+
+            return new ColordashWrapper(inputValue, functionQueue);
+        };
+
         colordash[colorFunction] = function (obj /* args */) {
             var argsArray = _.drop(_.toArray(arguments));
-            var colorInstance = color(obj);
-            colorInstance[colorFunction].apply(colorInstance, argsArray)
-
-            var outputFunction = colorSpecOutput(obj, colorInstance.alpha());
-            return colorInstance[outputFunction]();
+            var colordashInstance = colordash(obj);
+            return colordashInstance[colorFunction].apply(colordashInstance, argsArray).value();
         };
     }
 );
+
+ColordashWrapper.prototype.value = ColordashWrapper.prototype.valueOf = function() {
+    var inputValue = this.__inputValue;
+    var functionQueue = this.__functionQueue;
+
+    var colorInstance = color(inputValue);
+    _.forEach(functionQueue, function(queueObj) {
+        var functionName = queueObj.functionName;
+        var argsArray = queueObj.argsArray;
+        colorInstance[functionName].apply(colorInstance, argsArray);
+    });
+
+    var outputFunction = colorSpecOutput(inputValue, colorInstance.alpha());
+    return colorInstance[outputFunction]();
+
+};
 
 module.exports = colordash;
